@@ -46,4 +46,14 @@ public class ClientController {
           client.setId(clientId);
           return ResponseEntity.ok(clientRepository.save(client));
      }
+
+     @DeleteMapping("/{clientId}")
+     public ResponseEntity<Void> removeClient(@PathVariable Long clientId) {
+         if (!clientRepository.existsById(clientId)) {
+             return ResponseEntity.notFound().build();
+         }
+         clientRepository.deleteById(clientId);
+
+         return ResponseEntity.noContent().build();
+     }
 }
