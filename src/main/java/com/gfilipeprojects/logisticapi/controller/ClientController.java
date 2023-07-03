@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/clients")
-public class ClientController {
+public class  ClientController {
 
     @Autowired
     private ClientRepository clientRepository;
