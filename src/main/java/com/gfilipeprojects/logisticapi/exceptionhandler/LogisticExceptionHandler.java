@@ -1,15 +1,19 @@
 package com.gfilipeprojects.logisticapi.exceptionhandler;
 
+import com.gfilipeprojects.logisticapi.domain.model.Client;
+import com.gfilipeprojects.logisticapi.domain.model.exception.DomainException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -19,9 +23,10 @@ import java.util.List;
 
 @AllArgsConstructor
 @ControllerAdvice
-public class LogisticExceptionHandler  extends ResponseEntityExceptionHandler {
+public class LogisticExceptionHandler extends ResponseEntityExceptionHandler {
 
     private MessageSource messageSource;
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
@@ -41,5 +46,16 @@ public class LogisticExceptionHandler  extends ResponseEntityExceptionHandler {
         errorModel.setFields(fields);
 
         return handleExceptionInternal(ex, errorModel, headers, status, request);
+    }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<Object> verifyDuplicatedEmailException(DomainException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorModel errorModel = new ErrorModel();
+        errorModel.setStatus(status.value());
+        errorModel.setDateTime(LocalDateTime.now());
+        errorModel.setTitle(ex.getMessage());
+
+        return handleExceptionInternal(ex, errorModel, new HttpHeaders(), status, request);
     }
 }

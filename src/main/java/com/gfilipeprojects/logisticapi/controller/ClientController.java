@@ -1,6 +1,7 @@
 package com.gfilipeprojects.logisticapi.controller;
 
 import com.gfilipeprojects.logisticapi.domain.model.Client;
+import com.gfilipeprojects.logisticapi.domain.model.service.ClientRegisterService;
 import com.gfilipeprojects.logisticapi.repository.ClientRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -21,6 +22,9 @@ public class  ClientController {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ClientRegisterService clientRegisterService;
+
     @GetMapping
     public List<Client> getClientList() {
         return clientRepository.findAll();
@@ -36,7 +40,8 @@ public class  ClientController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Client addClient(@Valid @RequestBody Client client) {
-        return clientRepository.save(client);
+//      return clientRepository.save(client);
+        return clientRegisterService.saveClient(client);
     }
 
     @PutMapping("/{clientId}")
@@ -45,7 +50,7 @@ public class  ClientController {
               return ResponseEntity.notFound().build();
           }
           client.setId(clientId);
-          return ResponseEntity.ok(clientRepository.save(client));
+          return ResponseEntity.ok(clientRegisterService.saveClient(client));
      }
 
      @DeleteMapping("/{clientId}")
@@ -53,7 +58,8 @@ public class  ClientController {
          if (!clientRepository.existsById(clientId)) {
              return ResponseEntity.notFound().build();
          }
-         clientRepository.deleteById(clientId);
+//         clientRepository.deleteById(clientId);
+         clientRegisterService.removeClientById(clientId);
 
          return ResponseEntity.noContent().build();
      }
